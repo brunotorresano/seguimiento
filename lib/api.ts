@@ -38,3 +38,15 @@ export const upsertDayScore = async (score: Omit<DailyScore, 'updated_at'>) => {
 
     return data;
 };
+
+export const deleteDayScore = async (date: string) => {
+    const { error } = await supabase
+        .from('daily_scores')
+        .delete()
+        .eq('date', date);
+
+    if (error) {
+        console.error('Error deleting score:', error);
+        throw error;
+    }
+};

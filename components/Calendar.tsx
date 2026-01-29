@@ -127,7 +127,10 @@ export default function Calendar() {
                 isOpen={isModalOpen}
                 date={selectedDate}
                 initialScore={selectedScore}
-                onClose={() => setIsModalOpen(false)}
+                onClose={() => {
+                    setIsModalOpen(false);
+                    loadScores();
+                }}
                 onSave={handleSaveScore}
             />
         </div>

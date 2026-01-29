@@ -1,10 +1,10 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { DailyScore } from "@/lib/api";
+import { DailyScore, deleteDayScore } from "@/lib/api";
 import { format } from "@/lib/date";
 import { getStatusText, getStatusColor } from "@/lib/scores";
-import { X, Moon, Utensils, Trophy, Save } from "lucide-react";
+import { X, Moon, Utensils, Trophy, Save, Trash2 } from "lucide-react";
 
 interface DayModalProps {
     isOpen: boolean;
@@ -44,6 +44,19 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
             onClose();
         } catch (error) {
             alert("Error al guardar los datos");
+        } finally {
+            setIsSaving(false);
+        }
+    };
+
+    const handleDelete = async () => {
+        if (!confirm("¿Estás seguro de que quieres borrar este registro?")) return;
+        setIsSaving(true);
+        try {
+            await deleteDayScore(format(date, 'yyyy-MM-dd'));
+            onClose();
+        } catch (error) {
+            alert("Error al borrar los datos");
         } finally {
             setIsSaving(false);
         }
@@ -130,6 +143,16 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
                 </div>
 
                 <div className="p-6 bg-slate-50/50 flex gap-4">
+                    {initialScore && (
+                        <button
+                            onClick={handleDelete}
+                            disabled={isSaving}
+                            className="p-4 text-rose-500 hover:bg-rose-50 rounded-2xl transition-colors disabled:opacity-50"
+                            title="Borrar registro"
+                        >
+                            <Trash2 size={20} />
+                        </button>
+                    )}
                     <button onClick={onClose} className="flex-1 py-4 text-sm font-bold text-slate-600 hover:text-slate-900">
                         Cancelar
                     </button>

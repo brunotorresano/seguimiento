@@ -20,5 +20,8 @@ create policy "Public Insert" on daily_scores for insert with check (true);
 -- Create policy to allow anyone to update
 create policy "Public Update" on daily_scores for update using (true);
 
+-- Create policy to allow anyone to delete
+create policy "Public Delete" on daily_scores for delete using (true);
+
 -- Note: Since we use UPSERT (Insert or Update), both Insert and Update policies are needed.
 -- In some Supabase setups, you might also need a Delete policy if you ever delete rows.
