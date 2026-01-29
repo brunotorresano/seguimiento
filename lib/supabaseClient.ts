@@ -7,4 +7,8 @@ if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_A
   console.warn('⚠️ Supabase credentials are missing during build. This is normal if you are pre-rendering.');
 }
 
+if (typeof window !== 'undefined') {
+  console.log('🔌 Conectando a Supabase:', supabaseUrl);
+}
+
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);

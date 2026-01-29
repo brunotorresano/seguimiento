@@ -42,8 +42,9 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
                 sport,
             });
             onClose();
-        } catch (error) {
-            alert("Error al guardar los datos");
+        } catch (error: any) {
+            console.error("Error completo al guardar:", error);
+            alert("Error al guardar: " + (error.message || "revisa la consola del navegador (F12)"));
         } finally {
             setIsSaving(false);
         }
