@@ -5,6 +5,7 @@ export interface DailyScore {
     sleep: number;
     food: number;
     sport: number;
+    notes?: string;
     updated_at?: string;
 }
 

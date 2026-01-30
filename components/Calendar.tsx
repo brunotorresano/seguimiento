@@ -63,16 +63,16 @@ export default function Calendar() {
     const days = getMonthDays(currentMonth);
 
     return (
-        <div className="w-full max-w-6xl mx-auto px-4 py-8">
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-10">
+        <div className="w-full max-w-6xl mx-auto px-4 py-4">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-6">
                 <div>
-                    <h1 className="text-4xl font-black text-slate-900 tracking-tight flex items-center gap-3 capitalize">
-                        <div className="p-2 bg-indigo-600 text-white rounded-2xl shadow-lg">
-                            <CalendarIcon size={28} />
+                    <h1 className="text-2xl font-black text-slate-900 tracking-tight flex items-center gap-3 capitalize">
+                        <div className="p-1.5 bg-indigo-600 text-white rounded-xl shadow-lg">
+                            <CalendarIcon size={22} />
                         </div>
                         {format(currentMonth, 'MMMM yyyy')}
                     </h1>
-                    <p className="text-slate-500 mt-1 font-medium italic">Sigue tu ritmo, mejora tu vida.</p>
+                    <p className="text-slate-500 mt-1 text-sm font-medium italic">Sigue tu ritmo, mejora tu vida.</p>
                 </div>
 
                 <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100">
@@ -92,7 +92,7 @@ export default function Calendar() {
                 </div>
             </div>
 
-            <div className="flex flex-wrap gap-4 mb-8">
+            <div className="flex flex-wrap gap-4 mb-4">
                 <LegendItem color="bg-emerald-500" label="Top (>21)" />
                 <LegendItem color="bg-amber-400" label="Ok (>15)" />
                 <LegendItem color="bg-rose-500" label="Oops (≤15)" />

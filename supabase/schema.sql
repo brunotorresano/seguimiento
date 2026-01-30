@@ -4,6 +4,7 @@ create table daily_scores (
   sleep int check (sleep >= 0 and sleep <= 10) default 0,
   food int check (food >= 0 and food <= 10) default 0,
   sport int check (sport >= 0 and sport <= 10) default 0,
+  notes text,
   updated_at timestamp with time zone default now()
 );
 

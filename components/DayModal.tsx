@@ -18,6 +18,7 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
     const [sleep, setSleep] = useState(0);
     const [food, setFood] = useState(0);
     const [sport, setSport] = useState(0);
+    const [notes, setNotes] = useState("");
     const [isSaving, setIsSaving] = useState(false);
 
     useEffect(() => {
@@ -25,6 +26,7 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
             setSleep(initialScore?.sleep ?? 0);
             setFood(initialScore?.food ?? 0);
             setSport(initialScore?.sport ?? 0);
+            setNotes(initialScore?.notes ?? "");
         }
     }, [initialScore, isOpen]);
 
@@ -40,6 +42,7 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
                 sleep,
                 food,
                 sport,
+                notes,
             });
             onClose();
         } catch (error: any) {
@@ -125,7 +128,17 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
                     <ScoreInput label="Deporte" value={sport} onChange={setSport} icon={Trophy} colorClass="bg-emerald-500" />
 
                     <div className="pt-4 mt-4 border-t border-slate-100">
-                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl">
+                        <div className="flex flex-col gap-2">
+                            <label className="text-sm font-semibold text-slate-700">Comentarios del día</label>
+                            <textarea
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                placeholder="Escribe aquí tus reflexiones o notas..."
+                                className="w-full min-h-[100px] p-4 bg-slate-50 rounded-2xl border border-slate-100 text-sm text-slate-600 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500/50 transition-all resize-none"
+                            />
+                        </div>
+
+                        <div className="flex items-center justify-between p-4 bg-slate-50 rounded-2xl mt-6">
                             <div>
                                 <span className="text-sm font-bold text-slate-500 block uppercase tracking-wider">Puntuación Total</span>
                                 <span className="text-3xl font-black text-slate-900">{total} <span className="text-slate-300 text-lg">/ 30</span></span>
