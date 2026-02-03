@@ -4,7 +4,7 @@ import { useState, useEffect } from "react";
 import { DailyScore, deleteDayScore } from "@/lib/api";
 import { format } from "@/lib/date";
 import { getStatusText, getStatusColor } from "@/lib/scores";
-import { X, Moon, Utensils, Trophy, Save, Trash2 } from "lucide-react";
+import { X, CheckCircle2, Circle, Utensils, Trophy, Save, Trash2, Smile } from "lucide-react";
 
 interface DayModalProps {
     isOpen: boolean;
@@ -15,43 +15,74 @@ interface DayModalProps {
 }
 
 export default function DayModal({ isOpen, date, initialScore, onClose, onSave }: DayModalProps) {
-    const [sleep, setSleep] = useState(0);
-    const [food, setFood] = useState(0);
-    const [sport, setSport] = useState(0);
+    // Comida
+    const [healthyFood, setHealthyFood] = useState(false);
+    const [noEatingLate, setNoEatingLate] = useState(false);
+
+
+    // Dientes
+    const [teethCheck, setTeethCheck] = useState(false);
+
+    // Deporte
+    const [exercise, setExercise] = useState(false);
+    const [steps, setSteps] = useState(false);
+
     const [notes, setNotes] = useState("");
     const [isSaving, setIsSaving] = useState(false);
 
+
     useEffect(() => {
         if (isOpen) {
-            setSleep(initialScore?.sleep ?? 0);
-            setFood(initialScore?.food ?? 0);
-            setSport(initialScore?.sport ?? 0);
+            // Map teeth (0 or 10)
+            setTeethCheck(initialScore?.teeth === 10);
+
+            // Map food (0, 5, 10)
+            const foodVal = initialScore?.food ?? 0;
+            setHealthyFood(foodVal >= 5);
+            setNoEatingLate(foodVal >= 10);
+
+
+            // Map sport (0, 5, 10)
+            const sportVal = initialScore?.sport ?? 0;
+            setExercise(sportVal >= 5);
+            setSteps(sportVal >= 10);
+
             setNotes(initialScore?.notes ?? "");
         }
     }, [initialScore, isOpen]);
 
+
     if (!isOpen) return null;
 
-    const total = sleep + food + sport;
+    // Calc scores
+    const foodScore = (healthyFood ? 5 : 0) + (noEatingLate ? 5 : 0);
+    const teethScore = teethCheck ? 10 : 0;
+
+    const sportScore = (exercise ? 5 : 0) + (steps ? 5 : 0);
+
+    const total = foodScore + teethScore + sportScore;
+
 
     const handleSave = async () => {
         setIsSaving(true);
         try {
             await onSave({
                 date: format(date, 'yyyy-MM-dd'),
-                sleep,
-                food,
-                sport,
+                teeth: teethScore,
+                food: foodScore,
+                sport: sportScore,
                 notes,
             });
             onClose();
         } catch (error: any) {
             console.error("Error completo al guardar:", error);
-            alert("Error al guardar: " + (error.message || "revisa la consola del navegador (F12)"));
+            const errorMsg = error.message || (typeof error === 'object' ? JSON.stringify(error) : String(error));
+            alert("Error al guardar: " + errorMsg);
         } finally {
             setIsSaving(false);
         }
     };
+
 
     const handleDelete = async () => {
         if (!confirm("¿Estás seguro de que quieres borrar este registro?")) return;
@@ -66,43 +97,32 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
         }
     };
 
-    const ScoreInput = ({
+    const CheckboxItem = ({
         label,
-        value,
-        onChange,
-        icon: Icon,
-        colorClass
+        checked,
+        onToggle,
     }: {
         label: string,
-        value: number,
-        onChange: (v: number) => void,
-        icon: any,
-        colorClass: string
+        checked: boolean,
+        onToggle: () => void,
     }) => (
-        <div className="space-y-2">
-            <div className="flex items-center gap-2">
-                <div className={`p-2 rounded-lg ${colorClass} bg-opacity-20`}>
-                    <Icon size={18} className={colorClass.replace('bg-', 'text-')} />
-                </div>
-                <label className="text-sm font-semibold text-slate-700">{label}</label>
-                <span className="ml-auto text-lg font-bold text-slate-900">{value}</span>
+        <label className="flex items-center gap-3 cursor-pointer group">
+            <div
+                onClick={onToggle}
+                className={`p-1 rounded-lg transition-all ${checked ? 'bg-indigo-600' : 'bg-slate-100 group-hover:bg-slate-200'}`}
+            >
+                {checked ? (
+                    <CheckCircle2 size={18} className="text-white" />
+                ) : (
+                    <Circle size={18} className="text-slate-300" />
+                )}
             </div>
-            <input
-                type="range"
-                min="0"
-                max="10"
-                step="1"
-                value={value}
-                onChange={(e) => onChange(parseInt(e.target.value))}
-                className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-indigo-600"
-            />
-            <div className="flex justify-between text-[10px] text-slate-400 font-medium px-1">
-                <span>0</span>
-                <span>5</span>
-                <span>10</span>
-            </div>
-        </div>
+            <span className={`text-sm font-medium ${checked ? 'text-slate-900 font-bold' : 'text-slate-500'}`}>
+                {label}
+            </span>
+        </label>
     );
+
 
     return (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
@@ -123,9 +143,50 @@ export default function DayModal({ isOpen, date, initialScore, onClose, onSave }
                 </div>
 
                 <div className="p-8 space-y-8">
-                    <ScoreInput label="Sueño" value={sleep} onChange={setSleep} icon={Moon} colorClass="bg-indigo-500" />
-                    <ScoreInput label="Alimentación" value={food} onChange={setFood} icon={Utensils} colorClass="bg-orange-500" />
-                    <ScoreInput label="Deporte" value={sport} onChange={setSport} icon={Trophy} colorClass="bg-emerald-500" />
+                    {/* Comida */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-orange-500 bg-opacity-20">
+                                <Utensils size={18} className="text-orange-500" />
+                            </div>
+                            <label className="text-sm font-black text-slate-900 uppercase tracking-wide">Comida</label>
+                            <span className="ml-auto text-lg font-black text-orange-600">{foodScore}</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 pl-2">
+                            <CheckboxItem label="Comida Sana (No procesados y bajo en hidratos)" checked={healthyFood} onToggle={() => setHealthyFood(!healthyFood)} />
+                            <CheckboxItem label="Ayuno después de la comida principal" checked={noEatingLate} onToggle={() => setNoEatingLate(!noEatingLate)} />
+                        </div>
+                    </div>
+
+                    {/* Dientes */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-indigo-500 bg-opacity-20">
+                                <Smile size={18} className="text-indigo-500" />
+                            </div>
+                            <label className="text-sm font-black text-slate-900 uppercase tracking-wide">Dientes</label>
+                            <span className="ml-auto text-lg font-black text-indigo-600">{teethScore}</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 pl-2">
+                            <CheckboxItem label="Cepillado + Irrigador" checked={teethCheck} onToggle={() => setTeethCheck(!teethCheck)} />
+                        </div>
+                    </div>
+
+                    {/* Deporte */}
+                    <div className="space-y-4">
+                        <div className="flex items-center gap-2">
+                            <div className="p-2 rounded-lg bg-emerald-500 bg-opacity-20">
+                                <Trophy size={18} className="text-emerald-500" />
+                            </div>
+                            <label className="text-sm font-black text-slate-900 uppercase tracking-wide">Deporte</label>
+                            <span className="ml-auto text-lg font-black text-emerald-600">{sportScore}</span>
+                        </div>
+                        <div className="grid grid-cols-1 gap-2 pl-2">
+                            <CheckboxItem label="Tabla de ejercicios" checked={exercise} onToggle={() => setExercise(!exercise)} />
+                            <CheckboxItem label="Objetivo de pasos" checked={steps} onToggle={() => setSteps(!steps)} />
+                        </div>
+                    </div>
+
 
                     <div className="pt-4 mt-4 border-t border-slate-100">
                         <div className="flex flex-col gap-2">

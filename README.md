@@ -43,13 +43,16 @@ La aplicación estará disponible en `http://localhost:3000`.
 
 ---
 
-## 🎨 Lógica de Colores
+## 🎨 Lógica de Colores y Puntos
 
-La puntuación total se calcula sumando los tres parámetros (0-10 cada uno, máximo 30):
+- **Verde (Top)**: Total > 20
+- **Amarillo (Ok)**: Total entre 11 y 20
+- **Rojo (Oops)**: Total ≤ 10
 
-- 🟢 **Verde (Top)**: Total > 21
-- 🟡 **Amarillo (Ok)**: Total > 15 y ≤ 21
-- 🔴 **Rojo (Oops)**: Total ≤ 15
+### Objetivos Diarios:
+1. **Comida**: Sana (No proc. y bajo hidratos), Ayuno tras comida principal. (+5 c/u, máx 10)
+2. **Dientes**: Cepillado + Irrigador. (+10)
+3. **Deporte**: Tabla de ejercicios, Objetivo de pasos. (+5 c/u)
 
 ## 🚢 Despliegue con Dokploy
 

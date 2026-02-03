@@ -1,7 +1,7 @@
 -- Create the daily_scores table
 create table daily_scores (
   date date primary key,
-  sleep int check (sleep >= 0 and sleep <= 10) default 0,
+  teeth int check (teeth >= 0 and teeth <= 10) default 0,
   food int check (food >= 0 and food <= 10) default 0,
   sport int check (sport >= 0 and sport <= 10) default 0,
   notes text,

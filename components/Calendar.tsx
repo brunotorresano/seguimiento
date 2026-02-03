@@ -10,9 +10,14 @@ import {
 import { fetchMonthScores, upsertDayScore, DailyScore } from "@/lib/api";
 import DayCell from "./DayCell";
 import DayModal from "./DayModal";
-import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCcw } from "lucide-react";
+import { ChevronLeft, ChevronRight, Calendar as CalendarIcon, RefreshCcw, LogOut, User } from "lucide-react";
 
-export default function Calendar() {
+interface CalendarProps {
+    user?: any;
+    onLogout?: () => void;
+}
+
+export default function Calendar({ user, onLogout }: CalendarProps) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [scores, setScores] = useState<Record<string, DailyScore>>({});
     const [isLoading, setIsLoading] = useState(true);
@@ -75,27 +80,48 @@ export default function Calendar() {
                     <p className="text-slate-500 mt-0.5 text-sm font-medium italic">Sigue tu ritmo, mejora tu vida.</p>
                 </div>
 
-                <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100">
-                    <button onClick={handlePrevMonth} className="p-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-600">
-                        <ChevronLeft size={22} />
-                    </button>
-                    <button onClick={handleToday} className="px-6 py-2.5 bg-slate-900 text-white text-sm font-black rounded-xl hover:bg-slate-800 transition-all shadow-md">
-                        Hoy
-                    </button>
-                    <button onClick={handleNextMonth} className="p-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-600">
-                        <ChevronRight size={22} />
-                    </button>
-                    <div className="w-px h-6 bg-slate-100 mx-1" />
-                    <button onClick={loadScores} disabled={isLoading} className={`p-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 ${isLoading ? 'animate-spin' : ''}`}>
-                        <RefreshCcw size={18} />
-                    </button>
+                <div className="flex items-center gap-2">
+                    <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100">
+                        <button onClick={handlePrevMonth} className="p-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-600">
+                            <ChevronLeft size={22} />
+                        </button>
+                        <button onClick={handleToday} className="px-6 py-2.5 bg-slate-900 text-white text-sm font-black rounded-xl hover:bg-slate-800 transition-all shadow-md">
+                            Hoy
+                        </button>
+                        <button onClick={handleNextMonth} className="p-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-600">
+                            <ChevronRight size={22} />
+                        </button>
+                        <div className="w-px h-6 bg-slate-100 mx-1" />
+                        <button onClick={loadScores} disabled={isLoading} className={`p-2.5 hover:bg-slate-50 rounded-xl transition-colors text-slate-400 ${isLoading ? 'animate-spin' : ''}`}>
+                            <RefreshCcw size={18} />
+                        </button>
+                    </div>
+
+                    {user && (
+                        <div className="flex items-center gap-2 bg-white p-1.5 rounded-2xl shadow-sm border border-slate-100 ml-2">
+                            <div className="flex items-center gap-2 px-2">
+                                <div className="w-8 h-8 bg-indigo-50 rounded-full flex items-center justify-center text-indigo-600">
+                                    <User size={16} />
+                                </div>
+                                <span className="text-sm font-bold text-slate-600 hidden lg:inline max-w-[150px] truncate">{user.email}</span>
+                            </div>
+                            <div className="w-px h-6 bg-slate-100 mx-1" />
+                            <button
+                                onClick={onLogout}
+                                className="p-2.5 hover:bg-rose-50 text-slate-400 hover:text-rose-500 rounded-xl transition-all"
+                                title="Cerrar sesión"
+                            >
+                                <LogOut size={20} />
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
 
             <div className="flex flex-wrap gap-4 mb-2">
-                <LegendItem color="bg-emerald-500" label="Top (>21)" />
-                <LegendItem color="bg-amber-400" label="Ok (>15)" />
-                <LegendItem color="bg-rose-500" label="Oops (≤15)" />
+                <LegendItem color="bg-emerald-500" label="Top (>20)" />
+                <LegendItem color="bg-amber-400" label="Ok (11-20)" />
+                <LegendItem color="bg-rose-500" label="Oops (≤10)" />
             </div>
 
             <div className="bg-white rounded-[2rem] shadow-2xl border border-slate-100 overflow-hidden">

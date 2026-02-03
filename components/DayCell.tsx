@@ -13,7 +13,7 @@ interface DayCellProps {
 
 export default function DayCell({ day, currentMonth, score, onClick }: DayCellProps) {
     const isSelectedMonth = isSameMonth(day, currentMonth);
-    const total = score ? score.sleep + score.food + score.sport : 0;
+    const total = score ? score.teeth + score.food + score.sport : 0;
 
     const colors = score
         ? getColorClass(total)
@@ -45,7 +45,7 @@ export default function DayCell({ day, currentMonth, score, onClick }: DayCellPr
                 {score ? (
                     <div className="flex flex-col gap-0.5">
                         <div className="text-[9px] sm:text-[11px] font-bold opacity-80 truncate hidden sm:block">
-                            S:{score.sleep} A:{score.food} D:{score.sport}
+                            D:{score.teeth} A:{score.food} D:{score.sport}
                         </div>
                         <div className="text-[10px] sm:text-sm font-black tracking-tight">
                             {total} <span className="text-[8px] sm:text-[10px] opacity-70">pts</span>
